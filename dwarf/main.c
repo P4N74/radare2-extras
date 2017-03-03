@@ -53,13 +53,13 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 
 	res = dwarf_tag (die, &tag, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_type_in_str :: dwarf_tag :: %d\n", __LINE__);
+		eprintf ("ERROR: get_type_in_str :: dwarf_tag :: %d\n", __LINE__);
 		return res;
 	}
 
 	typedieres = get_type_die (die, &typedie, NULL);
 	if (typedieres == DW_DLV_ERROR) {
-		printf ("ERROR: get_type_in_str :: get_type_die :: %d\n", __LINE__);
+		eprintf ("ERROR: get_type_in_str :: get_type_die :: %d\n", __LINE__);
 		return res;
 	}
 
@@ -70,7 +70,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			res = dwarf_diename (die, &name, NULL);
 			if (res == DW_DLV_ERROR) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
-				printf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_NO_ENTRY) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
@@ -81,7 +81,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			}
 
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 		}
@@ -89,14 +89,14 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 	case DW_TAG_pointer_type:
 		{
 			if (typedieres == DW_DLV_ERROR) {
-				printf ("ERROR: get_type_in_str :: get_type_die :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: get_type_die :: %d\n", __LINE__);
 				return res;
 			} else if (typedieres == DW_DLV_NO_ENTRY) {
 				*nameref = r_str_concat (*nameref, "void *");
 			} else {
 				res = get_type_in_str (typedie, nameref, indentlevel, 0); // longlist == 1 may lead to infinite recursion since pointer to same struct is valid.
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 					return res;
 				}
 
@@ -104,7 +104,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			}
 
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 		}
@@ -116,14 +116,14 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			res = dwarf_diename (die, &name, NULL);
 			if (res == DW_DLV_ERROR) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
-				printf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_NO_ENTRY) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
 				if (typedieres == DW_DLV_OK) {
 					res = get_type_in_str (typedie, nameref, indentlevel, longlist);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+						eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 						return DW_DLV_ERROR;
 					}
 				} else {
@@ -135,7 +135,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			}
 
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 		}
@@ -150,20 +150,20 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			}
 
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 
 			if (typedieres == DW_DLV_NO_ENTRY) {
 				*nameref = r_str_concat (*nameref, "void ");
 			    if (! *nameref) {
-					printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 					return DW_DLV_ERROR;
 				}
 			} else if (typedieres == DW_DLV_OK) {
 				res = get_type_in_str (typedie, nameref, indentlevel, longlist);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 					return DW_DLV_ERROR;
 				}
 			}
@@ -177,7 +177,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 		    res = get_dwarf_diename (die, &name, NULL);
 			if (res == DW_DLV_ERROR) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
-				printf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_NO_ENTRY || longlist) {
 				int isStruct = (tag == DW_TAG_structure_type) ? 1 : 0;
@@ -186,15 +186,15 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
 				res = dwarf_dieoffset (die, &offset, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_type_in_str :: dwarf_dieoffset :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: dwarf_dieoffset :: %d\n", __LINE__);
 					return res;
 				}
 				res = print_struct_or_union_die (NULL, offset, indentlevel, 0, isStruct, C_FORMAT, longlist);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_type_in_str :: print_struct_or_union_die :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: print_struct_or_union_die :: %d\n", __LINE__);
 					return res;
 				}
-				printf (" ");
+				r_cons_printf (" ");
 			} else {
 				if (tag == DW_TAG_structure_type) {
 					*nameref = r_str_concatf (*nameref, "struct %s ", name);
@@ -204,7 +204,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 
 				if (! *nameref) {
 					dwarf_dealloc (dbg, name, DW_DLA_STRING);
-					printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 					return DW_DLV_ERROR;
 				}
 
@@ -219,7 +219,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			res = dwarf_diename (die, &name, NULL);
 			if (res == DW_DLV_ERROR) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
-				printf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_NO_ENTRY) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
@@ -229,7 +229,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 				} else if (typedieres == DW_DLV_OK) {
 					res = get_type_in_str (typedie, nameref, indentlevel, longlist);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+						eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 						return DW_DLV_ERROR;
 					}
 				}
@@ -239,13 +239,13 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			}
 
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 
 			res = get_array_length (die, &arrlen);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: %d\n", __LINE__);
+				eprintf ("ERROR: %d\n", __LINE__);
 				return res;
 			}
 
@@ -257,26 +257,26 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			char *name = NULL;
 			*nameref = r_str_concat (*nameref, "enum ");
 			if (! *nameref) {
-				printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 
 			res = dwarf_diename (die, &name, NULL);
 			if (res == DW_DLV_ERROR) {
 				dwarf_dealloc (dbg, name, DW_DLA_STRING);
-				printf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_type_in_str :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_NO_ENTRY) {
 				if (typedieres == DW_DLV_NO_ENTRY) {
 					*nameref = r_str_concat (*nameref, "void ");
 					if (! *nameref) {
-						printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+						eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 						return DW_DLV_ERROR;
 					}
 				} else if (typedieres == DW_DLV_OK) {
 					res = get_type_in_str (typedie, nameref, indentlevel, longlist);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+						eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 						return DW_DLV_ERROR;
 					}
 				}
@@ -289,13 +289,13 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 			if (typedieres == DW_DLV_NO_ENTRY) {
 				*nameref = r_str_concat (*nameref, "void ");
 				if (! *nameref) {
-					printf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: r_str_concat :: %d\n", __LINE__);
 					return DW_DLV_ERROR;
 				}
 			} else if (typedieres == DW_DLV_OK) {
 				res = get_type_in_str (typedie, nameref, indentlevel, longlist);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
+					eprintf ("ERROR: get_type_in_str :: get_type_in_str :: %d\n", __LINE__);
 					return DW_DLV_ERROR;
 				}
 			}
@@ -307,7 +307,7 @@ static int get_type_in_str (Dwarf_Die die, char **nameref, int indentlevel, int 
 		}
 		break;
 	default:
-		printf ("[*] NEW TAG found: get_type_in_str :: %d\n",tag);
+		eprintf ("[*] NEW TAG found: get_type_in_str :: %d\n",tag);
 	}
 
 	dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
@@ -321,7 +321,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 
 	res = dwarf_child (cur_die, &nextdie, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: dwarf_child :: %d\n", __LINE__);
+		eprintf ("ERROR: dwarf_child :: %d\n", __LINE__);
 		return res;
 	} else if (res == DW_DLV_NO_ENTRY) {
 		return res;
@@ -334,7 +334,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 
 		res = dwarf_tag (cur_die, &tag, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: load_globals :: %d\n", __LINE__);
+			eprintf ("ERROR: load_globals :: %d\n", __LINE__);
 			return res;
 		}
 
@@ -347,7 +347,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 
 				res = dwarf_hasattr (cur_die, DW_AT_location, &ret, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: load_globals_or_functions :: dwarf_hasattr :: %d\n", __LINE__);
+					eprintf ("ERROR: load_globals_or_functions :: dwarf_hasattr :: %d\n", __LINE__);
 					return res;
 				}
 
@@ -366,7 +366,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 
 					res = dwarf_loclist (attr, &locdesc, &lcnt, NULL);
 					if (res != DW_DLV_OK) {
-						printf ("ERROR: load_globals_or_functions :: dwarf_loclist :: %d\n", __LINE__);
+						eprintf ("ERROR: load_globals_or_functions :: dwarf_loclist :: %d\n", __LINE__);
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 						return res;
 					}
@@ -408,7 +408,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 
 				res = dwarf_hasattr (cur_die, DW_AT_low_pc, &ret, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: load_globals_or_functions :: dwarf_hasattr :: %d\n", __LINE__);
+					eprintf ("ERROR: load_globals_or_functions :: dwarf_hasattr :: %d\n", __LINE__);
 					return res;
 				}
 
@@ -450,13 +450,13 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 					res = dwarf_attr (cur_die, DW_AT_low_pc, &attr, NULL);
 					if (res != DW_DLV_OK) {
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
-						printf ("ERROR: %d\n", __LINE__);
+						eprintf ("ERROR: %d\n", __LINE__);
 						return res;
 					}
 
 					res = dwarf_formaddr (attr, &low_pc, NULL);
 					if (res != DW_DLV_OK) {
-						printf ("ERROR: load_globals_or_functions :: dwarf_formaddr :: %d\n", __LINE__);
+						eprintf ("ERROR: load_globals_or_functions :: dwarf_formaddr :: %d\n", __LINE__);
 						return res;
 					}
 
@@ -464,14 +464,14 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 					res = dwarf_attr (cur_die, DW_AT_high_pc, &attr, NULL);
 					if (res != DW_DLV_OK) {
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
-						printf ("ERROR: %d\n", __LINE__);
+						eprintf ("ERROR: %d\n", __LINE__);
 						return res;
 					}
 
 					res = dwarf_whatform (attr, &attr_form, NULL);
 					if (res != DW_DLV_OK) {
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
-						printf ("ERROR: %d\n", __LINE__);
+						eprintf ("ERROR: %d\n", __LINE__);
 						return res;
 					}
 
@@ -499,7 +499,7 @@ static int load_globals_or_functions (Dwarf_Die in_die, int load_globals) {
 	next:
 		res = dwarf_siblingof (dbg, cur_die, &nextdie, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("Error: dwarf_siblingof\n");
+			eprintf ("Error: dwarf_siblingof\n");
 			return -1;
 		}
 
@@ -540,7 +540,7 @@ static int get_type_die (Dwarf_Die die, Dwarf_Die *typedie, Dwarf_Error *error) 
 
 	res = get_type_die_offset (die, &offset, error);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_type_die :: get_type_die_offset :: %d\n", __LINE__);
+		eprintf ("ERROR: get_type_die :: get_type_die_offset :: %d\n", __LINE__);
 		return res;
 	} else if (res == DW_DLV_NO_ENTRY) {
 		return res;
@@ -606,7 +606,7 @@ static int get_dwarf_diename (Dwarf_Die die, char **diename, Dwarf_Error *error)
 
 	res = get_type_die (die, &typedie, error);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_dwarf_diename :: get_type_die :: %d\n", __LINE__);
+		eprintf ("ERROR: get_dwarf_diename :: get_type_die :: %d\n", __LINE__);
 		dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 		return res;
 	}
@@ -627,7 +627,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 
 	res = dwarf_child (die, &child, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_array_length :: dwarf_child :: %d\n", __LINE__);
+		eprintf ("ERROR: get_array_length :: dwarf_child :: %d\n", __LINE__);
 		dwarf_dealloc (dbg, child, DW_DLA_DIE);
 		return res;
 	} else if (res == DW_DLV_NO_ENTRY) {
@@ -640,7 +640,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 		Dwarf_Unsigned temp_len = 0;
 		res = dwarf_tag (child, &tag, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: get_array_length :: dwarf_tag :: %d\n", __LINE__);
+			eprintf ("ERROR: get_array_length :: dwarf_tag :: %d\n", __LINE__);
 			dwarf_dealloc (dbg, child, DW_DLA_DIE);
 			return res;
 		}
@@ -648,7 +648,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 		if (tag == DW_TAG_subrange_type) {
 			res = dwarf_attr (child, DW_AT_count, &attr, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: get_array_length :: dwarf_attr :: %d\n", __LINE__);
+				eprintf ("ERROR: get_array_length :: dwarf_attr :: %d\n", __LINE__);
 				dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 				dwarf_dealloc (dbg, child, DW_DLA_DIE);
 				return res;
@@ -665,7 +665,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 				res = dwarf_attr (child, DW_AT_upper_bound, &attr, NULL);
 				if (res == DW_DLV_ERROR) {
 					*len = 0;
-					printf ("ERROR: get_array_length :: dwarf_attr :: %d\n", __LINE__);
+					eprintf ("ERROR: get_array_length :: dwarf_attr :: %d\n", __LINE__);
 					dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 					dwarf_dealloc (dbg, child, DW_DLA_DIE);
 					return DW_DLV_ERROR;
@@ -684,7 +684,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 				temp_len += 1;
 			}
 		} else {
-			printf ("[!] New tag found in array's child : %d\n", tag);
+			eprintf ("[!] New tag found in array's child : %d\n", tag);
 			*len = 0;
 			return DW_DLV_ERROR;
 		}
@@ -692,7 +692,7 @@ static int get_array_length (Dwarf_Die die, Dwarf_Unsigned *len) {
 		*len *= temp_len;
 		res = dwarf_siblingof (dbg, child, &sibdie, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: get_array_length :: dwarf_siblingof :: %d\n", __LINE__);
+			eprintf ("ERROR: get_array_length :: dwarf_siblingof :: %d\n", __LINE__);
 			*len = 0;
 			dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 			dwarf_dealloc (dbg, child, DW_DLA_DIE);
@@ -720,7 +720,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 	// Return size value if DW_AT_byte_size or DW_AT_bit_size entry, if present
 	res = dwarf_bytesize (die, size, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_size::dwarf_bytesize::%d\n", __LINE__);
+		eprintf ("ERROR: get_size::dwarf_bytesize::%d\n", __LINE__);
 		return res;
 	} else if (res == DW_DLV_OK) {
 		*inbits = 0;
@@ -728,7 +728,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 	} else {
 		res = dwarf_bitsize (die, size, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: get_size::dwarf_bitsize::%d\n", __LINE__);
+			eprintf ("ERROR: get_size::dwarf_bitsize::%d\n", __LINE__);
 			return res;
 		} else if (res == DW_DLV_OK) {
 			*inbits = 1;
@@ -740,7 +740,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 
 	res = get_type_die (die, &typedie, NULL);
 	if (res != DW_DLV_OK) {
-		printf ("ERROR | NO_ENTRY: get_size::get_type_die::%d\n", __LINE__);
+		eprintf ("ERROR | NO_ENTRY: get_size::get_type_die::%d\n", __LINE__);
 		dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 		return res;
 	}
@@ -748,7 +748,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 	tag = 0;
 	res = dwarf_tag (typedie, &tag, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_size::dwarf_tag::%d\n", __LINE__);
+		eprintf ("ERROR: get_size::dwarf_tag::%d\n", __LINE__);
 		dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 		return res;
 	}
@@ -761,7 +761,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 			// This is repetition from above. Can be made into a function
 			res = dwarf_bytesize (typedie, size, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: get_size::dwarf_bytesize::%d\n", __LINE__);
+				eprintf ("ERROR: get_size::dwarf_bytesize::%d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			} else if (res == DW_DLV_OK) {
@@ -771,7 +771,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 			} else {
 				res = dwarf_bitsize (typedie, size, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_size::dwarf_bitsize::%d\n", __LINE__);
+					eprintf ("ERROR: get_size::dwarf_bitsize::%d\n", __LINE__);
 					dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 					return res;
 				} else if (res == DW_DLV_OK) {
@@ -790,14 +790,14 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 
 			res = get_size (typedie, &typesize, &bits);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: %d\n", __LINE__);
+				eprintf ("ERROR: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
 
 			res = get_array_length (typedie, &arrlength);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: %d\n", __LINE__);
+				eprintf ("ERROR: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
@@ -820,7 +820,7 @@ static int get_size (Dwarf_Die die, Dwarf_Unsigned *size, int *inbits) {
 		}
 		break;
 	default:
-		printf ("[*] NEW TAG found: get_size :: %d\n",tag);
+		eprintf ("[*] NEW TAG found: get_size :: %d\n",tag);
 	}
 	return res;
 }
@@ -831,7 +831,7 @@ static int print_value (RCore *core, Dwarf_Die die, Dwarf_Unsigned addr, int ind
 
 	res = get_type_tag (die, &tag, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: print_value::get_type_die::%d\n", __LINE__);
+		eprintf ("ERROR: print_value::get_type_die::%d\n", __LINE__);
 		return res;
 	}
 
@@ -845,21 +845,21 @@ static int print_value (RCore *core, Dwarf_Die die, Dwarf_Unsigned addr, int ind
 
 			res = get_type_die_offset (die, &offset, NULL);
 			if (res != DW_DLV_OK) {
-				printf ("ERROR: print_value :: get_type_die_offset :: %d\n", __LINE__);
+				eprintf ("ERROR: print_value :: get_type_die_offset :: %d\n", __LINE__);
 				return res;
 			}
 
 			if (type == NRM_FORMAT) {
-				printf ("{\n");
+				r_cons_printf ("{\n");
 			} else if (type == JSON_FORMAT) {
 				//printf ("{");
 			}
 			res = print_struct_or_union_die (core, offset, indentlevel + 1, addr, isStruct, type, 0); //longlist parameter does not matter here
 			if (type == NRM_FORMAT) {
 				for (i = 0; i < indentlevel; i++) {
-					printf ("  ");
+					r_cons_printf ("  ");
 				}
-				printf ("}");
+				r_cons_printf ("}");
 			} else if (type == JSON_FORMAT) {
 				//printf ("}");
 			}
@@ -872,7 +872,7 @@ static int print_value (RCore *core, Dwarf_Die die, Dwarf_Unsigned addr, int ind
 			Dwarf_Die typedie = 0;
 			res = get_type_die (die, &typedie, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: print_value :: get_type_die :: %d\n", __LINE__);
+				eprintf ("ERROR: print_value :: get_type_die :: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
@@ -884,22 +884,38 @@ static int print_value (RCore *core, Dwarf_Die die, Dwarf_Unsigned addr, int ind
 	case DW_TAG_pointer_type:
 	case DW_TAG_enumeration_type:
 		if (type == JSON_FORMAT) {
-			printf ("\"");
+			r_cons_printf ("\"");
 		}
 		res = DW_DLV_OK;
 		if (size == 1) {
-			printf ("0x%hhx", *(ut8 *)(core->block + addr));
+			if (type == JSON_FORMAT) {
+				r_cons_printf ("%hhu", *(ut8 *)(core->block + addr));
+			} else {
+				r_cons_printf ("0x%hhx", *(ut8 *)(core->block + addr));
+			}
 		} else if (size == 2) {
-			printf ("0x%hx", *(ut16 *)(core->block + addr));
+			if (type == JSON_FORMAT) {
+				r_cons_printf ("%hu", *(ut16 *)(core->block + addr));
+			} else {
+				r_cons_printf ("0x%hx", *(ut16 *)(core->block + addr));
+			}
 		} else if (size == 4) {
-			printf ("0x%x", *(ut32 *)(core->block + addr));
+			if (type == JSON_FORMAT) {
+				r_cons_printf ("%u", *(ut32 *)(core->block + addr));
+			} else {
+				r_cons_printf ("0x%x", *(ut32 *)(core->block + addr));
+			}
 		} else if (size == 8) {
-			printf ("0x%"PFMT64x"", *(ut64 *)(core->block + addr));
+			if (type == JSON_FORMAT) {
+				r_cons_printf ("%"PFMT64u, *(ut64 *)(core->block + addr));
+			} else {
+				r_cons_printf ("0x%"PFMT64x, *(ut64 *)(core->block + addr));
+			}
 		} else {
-			printf ("ERROR: print_value :: size = %llu", size);
+		    eprintf ("ERROR: print_value :: size = %llu", size);
 		}
 		if (type == JSON_FORMAT) {
-			printf ("\"");
+			r_cons_printf ("\"");
 		}
 		break;
 	case DW_TAG_array_type:
@@ -912,53 +928,69 @@ static int print_value (RCore *core, Dwarf_Die die, Dwarf_Unsigned addr, int ind
 			int inbits;
 			res = get_type_die (die, &typedie, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: print_value :: get_type_die :: %d\n", __LINE__);
+				eprintf ("ERROR: print_value :: get_type_die :: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
 			res = get_size (typedie, &typesize, &inbits);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: print_value :: get_size :: %d\n", __LINE__);
+				eprintf ("ERROR: print_value :: get_size :: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
 			res = get_array_length (typedie, &arrlength);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: %d\n", __LINE__);
+				eprintf ("ERROR: %d\n", __LINE__);
 				dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 				return res;
 			}
 
-			printf ("[");
+			r_cons_printf ("[");
 			for (i = 0; i < arrlength; i++) {
 				if (type == JSON_FORMAT) {
-					printf ("\"");
+					r_cons_printf ("\"");
 				}
 				if (typesize == 1) {
-					printf ("0x%hhx", *(ut8 *)(core->block + addr));
+					if (type == JSON_FORMAT) {
+						r_cons_printf ("%hhu", *(ut8 *)(core->block + addr));
+					} else {
+						r_cons_printf ("0x%hhx", *(ut8 *)(core->block + addr));
+					}
 				} else if (typesize == 2) {
-					printf ("0x%hx", *(ut16 *)(core->block + addr));
+					if (type == JSON_FORMAT) {
+						r_cons_printf ("%hu", *(ut16 *)(core->block + addr));
+					} else {
+						r_cons_printf ("0x%hx", *(ut16 *)(core->block + addr));
+					}
 				} else if (typesize == 4) {
-					printf ("0x%x", *(ut32 *)(core->block + addr));
+					if (type == JSON_FORMAT) {
+						r_cons_printf ("%u", *(ut32 *)(core->block + addr));
+					} else {
+						r_cons_printf ("0x%x", *(ut32 *)(core->block + addr));
+					}
 				} else if (typesize == 8) {
-					printf ("0x%"PFMT64x, *(ut64 *)(core->block + addr));
+					if (type == JSON_FORMAT) {
+						r_cons_printf ("%"PFMT64u, *(ut64 *)(core->block + addr));
+					} else {
+						r_cons_printf ("0x%"PFMT64x, *(ut64 *)(core->block + addr));
+					}
 				} else {
-					printf ("ERROR: print_value :: size = %llu", typesize);
+				    eprintf ("ERROR: print_value :: size = %llu", typesize);
 				}
 				if (type == JSON_FORMAT) {
-					printf ("\"");
+					r_cons_printf ("\"");
 				}
 				if (i != arrlength - 1) {
-					printf (", ");
+					r_cons_printf (", ");
 				}
 				addr += typesize;
 			}
-			printf ("]");
+			r_cons_printf ("]");
 			dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 		}
 		break;
 	default:
-		printf ("[*] NEW TAG found: print_value :: %d\n",tag);
+		eprintf ("[*] NEW TAG found: print_value :: %d\n",tag);
 		break;
 	}
 	return res;
@@ -971,18 +1003,18 @@ static int print_member_name (Dwarf_Die die, int type) {
 	//Get name
 	res = get_dwarf_diename (die, &membername, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: print_member_name::get_dwarf_diename::%d\n", __LINE__);
+		eprintf ("ERROR: print_member_name::get_dwarf_diename::%d\n", __LINE__);
 		dwarf_dealloc (dbg, membername, DW_DLA_STRING);
 		return res;
 	}
 
 	if (type == NRM_FORMAT) {
-		printf ("%s", membername);
+		r_cons_printf ("%s", membername);
 	} else if (type == JSON_FORMAT) {
-		printf ("\"%s\"", membername);
+		r_cons_printf ("\"%s\"", membername);
 	} else if (type == C_FORMAT) {
 		if (membername && strlen (membername) > 0) {
-			printf ("%s", membername);
+			r_cons_printf ("%s", membername);
 		}
 	}
 	dwarf_dealloc (dbg, membername, DW_DLA_STRING);
@@ -1003,7 +1035,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 	Dwarf_Die sibdie = 0;
 
 	if (!offset) {
-		printf ("ERROR: Invalid offset\n");
+		eprintf ("ERROR: Invalid offset\n");
 		return DW_DLV_ERROR;
 	}
 
@@ -1014,14 +1046,14 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 	}
 
 	if (type == JSON_FORMAT) {
-		printf ("{");
+		r_cons_printf ("{");
 	} else if (type == C_FORMAT) {
 		char *diename = NULL;
 
 		res = dwarf_diename (die, &diename, NULL);
 		if (res == DW_DLV_ERROR) {
 			dwarf_dealloc (dbg, diename, DW_DLA_STRING);
-			printf ("ERROR: print_struct_or_union_die :: dwarf_diename :: %d\n", __LINE__);
+			eprintf ("ERROR: print_struct_or_union_die :: dwarf_diename :: %d\n", __LINE__);
 			return res;
 		} else if (res == DW_DLV_NO_ENTRY) {
 			dwarf_dealloc (dbg, diename, DW_DLA_STRING);
@@ -1029,9 +1061,9 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 		}
 
 		if (isStruct) {
-			printf ("struct %s {\n", diename);
+			r_cons_printf ("struct %s {\n", diename);
 		} else {
-			printf ("union %s {\n", diename);
+			r_cons_printf ("union %s {\n", diename);
 		}
 
 		indentlevel += 1;
@@ -1042,7 +1074,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 
 	res = dwarf_child (die, &member, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: print_struct_die :: dwarf_child\n");
+		eprintf ("ERROR: print_struct_die :: dwarf_child\n");
 		dwarf_dealloc (dbg, die, DW_DLA_DIE);
 		dwarf_dealloc (dbg, member, DW_DLA_DIE);
 		return res;
@@ -1051,7 +1083,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 	while (res != DW_DLV_NO_ENTRY) {
 		if (type == NRM_FORMAT || type == C_FORMAT) {
 			for (i = 0; i < indentlevel; i++) {
-				printf ("  ");
+				r_cons_printf ("  ");
 			}
 		}
 
@@ -1060,22 +1092,22 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 			memset (typestr, 0, 8);
 			res = get_type_in_str (member, &typestr, indentlevel, longlist);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: print_struct_or_union_die :: get_type_in_str :: %d\n", __LINE__);
+				eprintf ("ERROR: print_struct_or_union_die :: get_type_in_str :: %d\n", __LINE__);
 				return res;
 			}
 
-			printf ("%s", typestr);
+			r_cons_printf ("%s", typestr);
 			free (typestr);
 		}
 
 		print_member_name (member, type);
 		if (type == NRM_FORMAT) {
-			printf (" = ");
+			r_cons_printf (" = ");
 		} else if (type == JSON_FORMAT) {
-			printf (":");
+			r_cons_printf (":");
 		} else if (type == C_FORMAT && c_format_arrlen_set) {
 			c_format_arrlen_set = 0;
-			printf (" [%"PFMT64u"]", arrlen);
+			r_cons_printf (" [%"PFMT64u"]", arrlen);
 		}
 
 		if (type != C_FORMAT) {
@@ -1085,7 +1117,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 			int inbits = 0;
 			res = get_size (member, &size, &inbits);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: print_struct_or_union_die :: get_size :: %d\n", __LINE__);
+				eprintf ("ERROR: print_struct_or_union_die :: get_size :: %d\n", __LINE__);
 				return res;
 			}
 
@@ -1093,7 +1125,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 				//Get data_member_location (byte offset from start)
 				res = dwarf_attr (member, DW_AT_data_member_location, &attr, NULL);
 				if (res == DW_DLV_ERROR || res == DW_DLV_NO_ENTRY) {
-					printf ("ERROR: print_struct_or_union_die :: dwarf_attr :: %d\n", __LINE__);
+					eprintf ("ERROR: print_struct_or_union_die :: dwarf_attr :: %d\n", __LINE__);
 					dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 					return res;
 				}
@@ -1101,7 +1133,7 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 				res = get_num_from_attr (attr, &off);
 				dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: print_struct_or_union_die::get_num_from_attr::%d\n", __LINE__);
+					eprintf ("ERROR: print_struct_or_union_die::get_num_from_attr::%d\n", __LINE__);
 					return res;
 				}
 			}
@@ -1110,38 +1142,38 @@ static int print_struct_or_union_die (RCore *core, Dwarf_Off offset, int indentl
 
 		res = dwarf_siblingof (dbg, member, &sibdie, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: print_struct_die :: dwarf_siblingof\n"); //TODO: should return from here?
+			eprintf ("ERROR: print_struct_die :: dwarf_siblingof\n"); //TODO: should return from here?
 		}
 		if (res == DW_DLV_NO_ENTRY) {
 			break;
 		}
 
 		if (type == C_FORMAT) {
-			printf (";");
+			r_cons_printf (";");
 		} else {
-			printf (",");
+			r_cons_printf (",");
 		}
 
 		if (type != JSON_FORMAT) {
-			printf ("\n");
+			r_cons_printf ("\n");
 		}
 		dwarf_dealloc (dbg, member, DW_DLA_DIE);
 		member = sibdie;
 	}
 	if (type == NRM_FORMAT) {
-		printf ("\n");
+		r_cons_printf ("\n");
 	} else if (type == JSON_FORMAT) {
-		printf ("}");
+		r_cons_printf ("}");
 		if (indentlevel == 0) {
-			printf ("\n");
+			r_cons_printf ("\n");
 		}
 	} else if (type == C_FORMAT) {
 		indentlevel -= 1;
-		printf (";\n");
+		r_cons_printf (";\n");
 		for (i = 0; i < indentlevel; i++) {
-			printf ("  ");
+			r_cons_printf ("  ");
 		}
-		printf ("}");
+		r_cons_printf ("}");
 	}
 
 	dwarf_dealloc (dbg, die, DW_DLA_DIE);
@@ -1163,7 +1195,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 		 * *retaddr = startaddr;
 		 *  return DW_DLV_OK;
 		 */
-		printf ("ERROR: get_address_and_die :: namestr is NULL :: %d\n", __LINE__);
+		eprintf ("ERROR: get_address_and_die :: namestr is NULL :: %d\n", __LINE__);
 		return DW_DLV_ERROR;
 	}
 
@@ -1177,13 +1209,13 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 	res = dwarf_child (die, &member, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: get_address_and_die :: dwarf_child :: %d\n", __LINE__);
+		eprintf ("ERROR: get_address_and_die :: dwarf_child :: %d\n", __LINE__);
 		return res;
 	} else if (res == DW_DLV_NO_ENTRY) {
 		Dwarf_Half tag = 0;
 		res = get_type_tag (die, &tag, NULL);
 		if (res != DW_DLV_OK) {
-			printf ("ERROR: get_address_and_die :: get_type_tag :: %d\n", __LINE__);
+			eprintf ("ERROR: get_address_and_die :: get_type_tag :: %d\n", __LINE__);
 			return res;
 		}
 
@@ -1197,14 +1229,14 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 				Dwarf_Die typedie = 0;
 				res = get_type_die (die, &typedie, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
+					eprintf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
 					dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 					return res;
 				}
 
 				res = get_address_and_die (core, typedie, startaddr, remain, retdie, retaddr);
 				if (res != DW_DLV_OK) {
-					printf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
+					eprintf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
 				}
 
 				if (typedie != *retdie) {
@@ -1225,14 +1257,14 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 				res = get_type_die (die, &typedie, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
+					eprintf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
 					dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 					return res;
 				}
 
 				res = get_size (typedie, &typesize, &inbits);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: get_address_and_die :: get_size :: %d\n", __LINE__);
+					eprintf ("ERROR: get_address_and_die :: get_size :: %d\n", __LINE__);
 					dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 					return res;
 				}
@@ -1240,14 +1272,14 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 #if 0
 				res = dwarf_hasattr (die, DW_AT_data_member_location, &ret, NULL);
 				if (res == DW_DLV_ERROR) {
-					printf ("ERROR: dwarf_hasattr :: %d\n", __LINE__);
+					eprintf ("ERROR: dwarf_hasattr :: %d\n", __LINE__);
 					return res;
 				}
 
 				if (ret) {
 					res = dwarf_attr (die, DW_AT_data_member_location, &attr, NULL);
 					if (res != DW_DLV_OK) {
-						printf ("ERROR: get_address_and_die :: dwarf_attr :: %d\n", __LINE__);
+						eprintf ("ERROR: get_address_and_die :: dwarf_attr :: %d\n", __LINE__);
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 						return res;
 					}
@@ -1255,7 +1287,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 					res = get_num_from_attr (attr, &off);
 					dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_address_and_die :: get_num_from_attr :: %d\n", __LINE__);
+						eprintf ("ERROR: get_address_and_die :: get_num_from_attr :: %d\n", __LINE__);
 						return res;
 					}
 				}
@@ -1275,7 +1307,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 					res = get_type_die (typedie, &tmpdie, NULL);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
+						eprintf ("ERROR: get_address_and_die :: get_type_die :: %d\n", __LINE__);
 						dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 						return res;
 					}
@@ -1285,7 +1317,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 					res = dwarf_tag (typedie, &tag, NULL);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: get_address_and_die :: dwarf_tag :: %d\n", __LINE__);
+						eprintf ("ERROR: get_address_and_die :: dwarf_tag :: %d\n", __LINE__);
 						dwarf_dealloc (dbg, typedie, DW_DLA_DIE);
 						return res;
 					}
@@ -1293,7 +1325,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 				res = get_address_and_die (core, typedie, ptraddress, remain, retdie, retaddr);
 				if (res != DW_DLV_OK) {
-					printf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
+					eprintf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
 				}
 
 				if (typedie != *retdie) {
@@ -1303,7 +1335,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 			}
 			break;
 		default:
-			printf ("ERROR: get_address_and_die :: something new that is not implemented\n");
+			eprintf ("ERROR: get_address_and_die :: something new that is not implemented\n");
 			break;
 		}
 
@@ -1326,7 +1358,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 			res = dwarf_diename (member, &diename, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: get_address_and_die :: dwarf_diename :: %d\n", __LINE__);
+				eprintf ("ERROR: get_address_and_die :: dwarf_diename :: %d\n", __LINE__);
 				return res;
 			} else if (res == DW_DLV_OK) {
 				if (!strcmp (diename, namestr)) {
@@ -1339,14 +1371,14 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 
 					res = dwarf_hasattr (member, DW_AT_data_member_location, &ret, NULL);
 					if (res == DW_DLV_ERROR) {
-						printf ("ERROR: dwarf_hasattr :: %d\n", __LINE__);
+						eprintf ("ERROR: dwarf_hasattr :: %d\n", __LINE__);
 						return res;
 					}
 
 					if (ret) {
 						res = dwarf_attr (member, DW_AT_data_member_location, &attr, NULL);
 						if (res != DW_DLV_OK) {
-							printf ("ERROR: get_address_and_die :: dwarf_attr :: %d\n", __LINE__);
+							eprintf ("ERROR: get_address_and_die :: dwarf_attr :: %d\n", __LINE__);
 							dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 							return res;
 						}
@@ -1354,13 +1386,13 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 						res = get_num_from_attr (attr, &off);
 						dwarf_dealloc (dbg, attr, DW_DLA_ATTR);
 						if (res == DW_DLV_ERROR) {
-							printf ("ERROR: get_address_and_die :: get_num_from_attr :: %d\n", __LINE__);
+							eprintf ("ERROR: get_address_and_die :: get_num_from_attr :: %d\n", __LINE__);
 							return res;
 						}
 					}
 					res = get_address_and_die (core, member, startaddr + off, remain, retdie, retaddr);
 					if (res != DW_DLV_OK) {
-						printf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
+						eprintf ("ERROR | NO_ENTRY: get_address_and_die :: get_address_and_die :: %d\n", __LINE__);
 						//return res;
 					}
 
@@ -1369,7 +1401,7 @@ static int get_address_and_die (RCore *core, Dwarf_Die die, Dwarf_Unsigned start
 			}
 			res = dwarf_siblingof (dbg, member, &sibdie, NULL);
 			if (res == DW_DLV_ERROR) {
-				printf ("ERROR: get_address_and_die :: dwarf_siblingof :: %d\n", __LINE__);
+				eprintf ("ERROR: get_address_and_die :: dwarf_siblingof :: %d\n", __LINE__);
 				return res;
 			}
 			//dwarf_dealloc (dbg, member, DW_DLA_DIE);
@@ -1393,7 +1425,7 @@ static int print_specific_stuff (RCore *core, ut64 offset, Dwarf_Unsigned starta
 	ut64 oldblocksize = 0;
 
 	if (!offset) {
-		printf ("ERROR: Invalid offset\n");
+		eprintf ("ERROR: Invalid offset\n");
 		return DW_DLV_ERROR;
 	}
 
@@ -1405,12 +1437,12 @@ static int print_specific_stuff (RCore *core, ut64 offset, Dwarf_Unsigned starta
 
 	res = get_address_and_die (core, die, startaddr, remain, &member, &addr);
 	if (res != DW_DLV_OK) {
-		printf ("ERROR: print_specific_stuff :: get_address_and_die :: %d\n", __LINE__);
+		eprintf ("ERROR: print_specific_stuff :: get_address_and_die :: %d\n", __LINE__);
 		return res;
 	}
 
 	if (onlyaddr) {
-		printf ("0x%"PFMT64x"\n", addr);
+		r_cons_printf ("0x%"PFMT64x"\n", addr);
 		return res;
 	}
 
@@ -1420,35 +1452,35 @@ static int print_specific_stuff (RCore *core, ut64 offset, Dwarf_Unsigned starta
 
 		res = dwarf_diename (member, &name, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: print_specific_stuff :: dwarf_diename :: %d\n", __LINE__);
+			eprintf ("ERROR: print_specific_stuff :: dwarf_diename :: %d\n", __LINE__);
 			return res;
 		}
 
 		nameref = malloc (10);
 		if (!nameref) {
-			printf("ERROR: print_specific_stuff :: malloc :: %d\n", __LINE__);
+			eprintf("ERROR: print_specific_stuff :: malloc :: %d\n", __LINE__);
 			return DW_DLV_ERROR;
 		}
 		*nameref = 0;
 		res = get_type_in_str (member, &nameref, 0, longlist);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: print_specific_stuff :: get_type_in_str :: %d\n", __LINE__);
+			eprintf ("ERROR: print_specific_stuff :: get_type_in_str :: %d\n", __LINE__);
 			return res;
 		}
 
-		printf ("%s%s", nameref, name);
+		r_cons_printf ("%s%s", nameref, name);
 		if (c_format_arrlen_set) {
 			c_format_arrlen_set = 0;
-			printf (" [%"PFMT64u"];\n", arrlen);
+			r_cons_printf (" [%"PFMT64u"];\n", arrlen);
 		} else {
-			printf (";\n");
+			r_cons_printf (";\n");
 		}
 		dwarf_dealloc (dbg, name, DW_DLA_STRING);
 		free (nameref);
 	} else {
 		res = get_size (member, &size, &inbits);
 		if (res == DW_DLV_ERROR) {
-			printf ("ERROR: print_specific_stuff :: get_size::%d\n", __LINE__);
+			eprintf ("ERROR: print_specific_stuff :: get_size::%d\n", __LINE__);
 			return res;
 		}
 
@@ -1458,13 +1490,13 @@ static int print_specific_stuff (RCore *core, ut64 offset, Dwarf_Unsigned starta
 			core->offset = addr;
 			res = r_core_block_size (core, size);
 			if (!res) {
-				printf ("ERROR: r_core_block_size :: %d\n", __LINE__);
+				eprintf ("ERROR: r_core_block_size :: %d\n", __LINE__);
 				return DW_DLV_ERROR;
 			}
 		}
 
 		print_value (core, member, addr - core->offset, 0, size, type);
-		printf ("\n");
+		r_cons_printf ("\n");
 		if (core->offset != oldoffset || core->blocksize != oldblocksize) {
 			core->offset = oldoffset;
 			core->blocksize = oldblocksize;
@@ -1474,7 +1506,7 @@ static int print_specific_stuff (RCore *core, ut64 offset, Dwarf_Unsigned starta
 	return 0;
 }
 
-static int print_type_and_size (RCore *core, ut64 sdboffset, ut64 startaddr, char *remain) {
+static int print_type_and_size (RCore *core, ut64 sdboffset, ut64 startaddr, char *remain, int output) {
 	int res = DW_DLV_ERROR;
 	Dwarf_Die die = 0;
 	Dwarf_Die member = 0;
@@ -1483,7 +1515,7 @@ static int print_type_and_size (RCore *core, ut64 sdboffset, ut64 startaddr, cha
 	ut64 addr;
 
 	if (sdboffset == 0) {
-		printf ("TODO: implemente iddt for variables\n");
+		eprintf ("TODO: implemente iddt for variables\n");
 		return DW_DLV_ERROR;
 	} else {
 		res = dwarf_offdie (dbg, sdboffset, &die, NULL);
@@ -1494,7 +1526,7 @@ static int print_type_and_size (RCore *core, ut64 sdboffset, ut64 startaddr, cha
 
 		res = get_address_and_die (core, die, startaddr, remain, &member, &addr);
 		if (res != DW_DLV_OK) {
-			printf ("ERROR: print_specific_stuff :: get_address_and_die :: %d\n", __LINE__);
+			eprintf ("ERROR: print_specific_stuff :: get_address_and_die :: %d\n", __LINE__);
 			return res;
 		}
 	}
@@ -1504,25 +1536,29 @@ static int print_type_and_size (RCore *core, ut64 sdboffset, ut64 startaddr, cha
 
 	nameref = malloc (10);
 	if (!nameref) {
-		printf("ERROR: print_type_and_size :: malloc :: %d\n", __LINE__);
+		eprintf ("ERROR: print_type_and_size :: malloc :: %d\n", __LINE__);
 		return DW_DLV_ERROR;
 	}
 
 	*nameref = 0;
 	res = get_type_in_str (die, &nameref, 0, 0);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: print_type_and_size :: get_type_in_str :: %d\n", __LINE__);
+		eprintf ("ERROR: print_type_and_size :: get_type_in_str :: %d\n", __LINE__);
 		return res;
 	}
 
 	addr = 0; //use it as size
 	res = get_size (die, &addr, &inbits);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: print_specific_stuff :: get_size::%d\n", __LINE__);
+		eprintf ("ERROR: print_specific_stuff :: get_size::%d\n", __LINE__);
 		return res;
 	}
 
-	printf ("%s - %"PFMT64u"\n", nameref, addr);
+	if (output == NRM_FORMAT) {
+		r_cons_printf ("%s - %"PFMT64u, nameref, addr);
+	} else if (output == JSON_FORMAT) {
+		r_cons_printf ("{'%s':%"PFMT64u"}", nameref, addr);
+	}
 	return DW_DLV_OK;
 }
 
@@ -1537,7 +1573,7 @@ static int is_declaration (Dwarf_Die die) {
 	ret = 0;
 	res = dwarf_hasattr (die, DW_AT_declaration, &ret, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: is_declaration\n");
+		eprintf ("ERROR: is_declaration\n");
 	}
 
 	return ret;
@@ -1563,7 +1599,7 @@ static int store_die_offset (Dwarf_Die die) {
 	res = DW_DLV_ERROR;
 	res = dwarf_dieoffset (die, &off, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: store_die_offset\n");
+		eprintf ("ERROR: store_die_offset\n");
 		return -1;
 	}
 
@@ -1583,7 +1619,7 @@ static int is_struct_type (Dwarf_Die die) {
 
 	res = dwarf_tag (die, &tag, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("ERROR: is_struct_type\n");
+		eprintf ("ERROR: is_struct_type\n");
 	}
 
 	return (res == DW_DLV_OK && tag == DW_TAG_structure_type) ? 1 : 0;
@@ -1602,7 +1638,7 @@ static int first_parse (Dwarf_Die in_die) {
 
 	res = dwarf_child (cur_die, &nextdie, NULL);
 	if (res == DW_DLV_ERROR) {
-		printf ("Error: dwarf_child\n");
+		eprintf ("Error: dwarf_child\n");
 	} else if (res == DW_DLV_NO_ENTRY) {
 		return 0;
 	}
@@ -1617,7 +1653,7 @@ static int first_parse (Dwarf_Die in_die) {
 
 		res = dwarf_siblingof (dbg, cur_die, &nextdie, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("Error: dwarf_siblingof\n");
+			eprintf ("Error: dwarf_siblingof\n");
 			return -1;
 		}
 		if (res == DW_DLV_NO_ENTRY) {
@@ -1662,12 +1698,12 @@ static int read_cu_list (int flag) {
 
 		res = dwarf_siblingof (dbg, NULL, &cu_die, NULL);
 		if (res == DW_DLV_ERROR) {
-			printf ("Error in dwarf_siblingof on CU die\n");
+			eprintf ("Error in dwarf_siblingof on CU die\n");
 			return 1;
 		}
 
 		if (res == DW_DLV_NO_ENTRY) {
-			printf ("NO ENTRY! in dwarf_siblingof on CU die.\n");
+			eprintf ("NO ENTRY! in dwarf_siblingof on CU die.\n");
 			return -1;
 		}
 
@@ -1765,34 +1801,34 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 		}
 
 		sdboffset = sdb_num_get (s, structname, 0);
-		if ((*input != 't') && sdboffset == 0) {
-			printf ("DWARF: invalid offset for struct %s\n", structname);
+		if ((input[0] != 't') && sdboffset == 0) {
+			eprintf ("DWARF: invalid offset for struct %s\n", structname);
 		    return true;
 		}
 
 		res = dwarf_offdie (dbg, sdboffset, &die, NULL);
 		if (res != DW_DLV_OK) {
-			printf ("ERROR: r_cmd_dwarf_call :: dwarf_offdie :: %d\n", __LINE__);
+			eprintf ("ERROR: r_cmd_dwarf_call :: dwarf_offdie :: %d\n", __LINE__);
 		    return true;
 		}
 
 		res = get_size (die, &size, &inbits);
 		if (res != DW_DLV_OK) {
-			printf ("ERROR: r_cmd_dwarf_call :: get_size :: %d\n", __LINE__);
+			eprintf ("ERROR: r_cmd_dwarf_call :: get_size :: %d\n", __LINE__);
 		    return true;
 		}
 	}
 
-	switch (*input) {
+	switch (input[0]) {
 	case 'a': // idda: print address
 		{
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
 			}
 
 			if (!structname) {
-				printf ("Usage: idda structname[.member1[.submember.[..]]]\n");
+				eprintf ("Usage: idda structname[.member1[.submember.[..]]]\n");
 				break;
 			}
 
@@ -1805,7 +1841,7 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 				}
 				if (res != DW_DLV_OK) {
 					dwarf_dealloc (dbg, die, DW_DLA_DIE);
-					printf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
+					eprintf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
 					break;
 				}
 			}
@@ -1818,16 +1854,16 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 			int longlist = 0;
 
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
 			}
 
 			if (!structname) {
-				printf ("Usage: iddd[l] structname[.member1[.submember.[..]]]\tprint C-type struct declaration\n");
+				eprintf ("Usage: iddd[l] structname[.member1[.submember.[..]]]\tprint C-type struct declaration\n");
 				break;
 			}
 
-			longlist = (*(input + 1) == 'l') ? 1 : 0;
+			longlist = (input[1] == 'l') ? 1 : 0;
 
 			oldblocksize = core->blocksize;
 			if (r_core_block_size (core, size)) {
@@ -1835,11 +1871,11 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 					res = print_specific_stuff (core, sdboffset, core->offset, temp, 0, C_FORMAT, longlist);
 				} else {
 					res = print_struct_or_union_die (core, sdboffset, 0, 0, 1, C_FORMAT, longlist);
-					printf (";\n"); // TODO: fix this extra statement
+					r_cons_printf (";\n"); // TODO: fix this extra statement
 				}
 				if (res != DW_DLV_OK) {
 					dwarf_dealloc (dbg, die, DW_DLA_DIE);
-					printf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
+					eprintf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
 					break;
 				}
 			}
@@ -1853,7 +1889,7 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 				if (arg1) {
 					return r_cmd_dwarf_init (core, arg1);
 				} else {
-					printf ("Usage: (iddi | dwarfi) filename\n");
+					eprintf ("Usage: (iddi | dwarfi) filename\n");
 					// return false;
 				}
 			}
@@ -1862,11 +1898,11 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 	case 'l': // iddl*: print global functions or global variables that can be loaded as r2 flags
 		{
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
 			}
 
-			switch (*(input + 1)) {
+			switch (input[1]) {
 			case 'f':
 				read_cu_list (2);
 				break;
@@ -1874,7 +1910,7 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 				read_cu_list (1);
 				break;
 			default:
-				printf ("Usage:\n\tiddlf: load function in r2 flag format\n\tiddlg: load global variables in r2 flag format\n");
+				eprintf ("Usage:\n\tiddlf: load function in r2 flag format\n\tiddlg: load global variables in r2 flag format\n");
 				break;
 			}
 		}
@@ -1882,27 +1918,36 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 	case 't':
 		{
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
 			}
 
-			res = print_type_and_size (core, sdboffset, core->offset, temp);
+			type = NRM_FORMAT;
+			if (input[1] == 'j') {
+				type = JSON_FORMAT;
+			}
+			res = print_type_and_size (core, sdboffset, core->offset, temp, type);
 			if (res != DW_DLV_OK) {
-				printf ("ERROR: r_cmd_dwarf_call :: print_type_and_size :: %d\n", __LINE__);
+				eprintf ("ERROR: r_cmd_dwarf_call :: print_type_and_size :: %d\n", __LINE__);
 				break;
 			}
+			r_cons_printf ("\n");
 		}
 		break;
 	case 'v': // iddv: print value //TODO: update the output as "(type) value" instead of just "value"
 		{
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
 			}
 
 			if (!structname) {
-				printf ("Usage: iddv structname[.member1[.submember.[..]]]\n");
+				eprintf ("Usage: iddv structname[.member1[.submember.[..]]]\n");
 				break;
+			}
+
+			if (input[1] == 'j') {
+				type = JSON_FORMAT;
 			}
 
 			oldblocksize = core->blocksize;
@@ -1914,7 +1959,7 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 				}
 				if (res != DW_DLV_OK) {
 					dwarf_dealloc (dbg, die, DW_DLA_DIE);
-					printf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
+					eprintf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
 					break;
 				}
 			}
@@ -1925,8 +1970,12 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
     default:
 		if (arg1) {
 			if (fd == -1 || !dbg || !s) {
-				printf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
+				eprintf ("DWARF: initialise sdb and dbg entries with iddi filename\n");
 				break;
+			}
+
+			if (input[0] == 'j') {
+				type = JSON_FORMAT;
 			}
 
 			oldblocksize = core->blocksize;
@@ -1938,7 +1987,7 @@ static int r_cmd_dwarf_call (void *user, const char *input) {
 				}
 				if (res != DW_DLV_OK) {
 					dwarf_dealloc (dbg, die, DW_DLA_DIE);
-					printf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
+					eprintf ("ERROR: r_cmd_dwarf_call :: print_specific_stuff :: %d\n", __LINE__);
 					break;
 				}
 			}
@@ -1963,7 +2012,7 @@ static int r_cmd_dwarf_deinit () {
 	if (fd && dbg) {
 		res = dwarf_finish (dbg, NULL);
 		if (res != DW_DLV_OK) {
-			printf ("dwarf_finish failed\n");
+			eprintf ("dwarf_finish failed\n");
 		}
 
 		sdb_close (s);
